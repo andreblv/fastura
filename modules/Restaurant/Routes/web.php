@@ -11,7 +11,8 @@
 |
 */
 
-Route::prefix('restaurant')->group(function() {
+// Se agregó middleware(['auth'])-> para autenticar al usuario, redirigiendo al login para solucionar el error 
+Route::middleware(['auth'])->prefix('restaurant')->group(function() {
     // para configuracion de productos a mostrar
     Route::get('/list/items', 'RestaurantController@list_items')->name('tenant.restaurant.list_items');
     Route::post('items/visible', 'RestaurantController@is_visible');
@@ -33,7 +34,7 @@ Route::prefix('restaurant')->group(function() {
         Route::post('/', 'NotesController@store');
         Route::delete('{id}', 'NotesController@destroy');
     });
-
+    
     //Promotion
     Route::prefix('promotions')->group(function() {
 
