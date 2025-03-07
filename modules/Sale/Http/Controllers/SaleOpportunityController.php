@@ -2,6 +2,7 @@
 
 namespace Modules\Sale\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\SearchItemController;
 use App\Http\Controllers\Tenant\EmailController;
 use App\Models\Tenant\Configuration;
@@ -340,15 +341,28 @@ class SaleOpportunityController extends Controller
         return $this->searchClientById($id);
     }
 
-    public function download($external_id, $format = 'a4') {
+
+    public function download($external_id, $format = 'a4')
+    {
         $sale_opportunity = SaleOpportunity::where('external_id', $external_id)->first();
-
-        if (!$sale_opportunity) throw new Exception("El código {$external_id} es inválido, no se encontro el pedido relacionado");
-
-        $this->reloadPDF($sale_opportunity, $format, $sale_opportunity->filename);
-
+        // $this->reloadPDF($sale_opportunity, $format, $sale_opportunity->filename);
+        if (!$sale_opportunity) {
+            return response()->view('errors.not_found', [
+                'message' => "El código {$external_id} es inválido, no se encontró el pedido relacionado"
+            ], 404);
+        }
+        $filename = $sale_opportunity->filename . '.pdf';
+        $filePath = 'sale_opportunity/' . $filename;
+    
+        if (!Storage::disk('tenant')->exists($filePath)) {
+            return response()->view('errors.file_not_found', [
+                'message' => "El archivo PDF '{$filename}' no existe.",
+                'filename' => $filename
+            ], 404);
+        }
+    
         return $this->downloadStorage($sale_opportunity->filename, 'sale_opportunity');
-    }
+    } 
 
 
     public function toPrint($external_id, $format) {
