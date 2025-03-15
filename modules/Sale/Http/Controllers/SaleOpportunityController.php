@@ -347,7 +347,8 @@ class SaleOpportunityController extends Controller
         $sale_opportunity = SaleOpportunity::where('external_id', $external_id)->first();
         // $this->reloadPDF($sale_opportunity, $format, $sale_opportunity->filename);
         if (!$sale_opportunity) {
-            return response()->view('errors.not_found', [
+            return response()->json([
+                'success' => false,
                 'message' => "El código {$external_id} es inválido, no se encontró el pedido relacionado"
             ], 404);
         }
