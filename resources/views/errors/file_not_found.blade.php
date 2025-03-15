@@ -37,7 +37,7 @@
             margin-bottom: 20px;
         }
 
-        .octopus svg {
+        .buho svg {
             width: 150px;
             margin-top: 15px;
         }
@@ -65,7 +65,7 @@
         <h1 class="error-message">Archivo no encontrado</h1>
         <p class="file-name">El archivo "{{ $filename }}" no existe o no fue encontrado.</p>
 
-        <div class="octopus">
+        <div class="buho">
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="64px" height="64px"
                 viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
@@ -145,7 +145,12 @@
             </svg>
         </div>
 
-        <a href="http://demo.fastura.test/sale-opportunities" class="btn">Volver al inicio</a>
+        <button class="btn" onclick="cerrarPagina()">Cerrar página</button>
+        <script>
+        function cerrarPagina() {
+            window.close();
+        }
+        </script>
     </main>
 </body>
 
