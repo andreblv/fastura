@@ -12,6 +12,7 @@ use App\Models\Tenant\Item;
 use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Tenant\Configuration;
 
 /**
  * Class DashboardSalePurchase
@@ -157,6 +158,22 @@ class DashboardSalePurchase
 
     }
 
+    private function getThemeColors()
+    {
+        $theme = Configuration::first()->visual->sidebar_theme;
+        switch($theme) {
+            case 'blue':
+                return ['#7367f0', '#ea5455'];
+            case 'green':
+                return ['#28c76f', '#283046'];
+            case 'red':
+                return ['#ea5455', '#283046'];
+            case 'dark':
+                return ['#283046', '#ea5455'];
+            default: 
+                return ['#00cfe8', '#ea5455'];
+        }
+    }
 
     /**
      * @param $establishment_id
@@ -203,15 +220,15 @@ class DashboardSalePurchase
                                 return Carbon::parse($date->date_of_issue)->format('m');
                             });
 
-
+        $colors = $this->getThemeColors();
         return [
             'totals' => [
                 'purchases_total_perception' => number_format($purchases_total_perception,2),
-                'purchases_total' => number_format( round($purchases_total, 2),2),
+                'purchases_total' => number_format(round($purchases_total, 2),2),
                 'total' => number_format($purchases_total + $purchases_total_perception,2),
-                'date_of_issue'=>[
-                    'start'=>$d_start,
-                    'end'=>$d_end,
+                'date_of_issue' => [
+                    'start' => $d_start,
+                    'end' => $d_end,
                 ]
             ],
             'graph' => [
@@ -220,17 +237,17 @@ class DashboardSalePurchase
                     [
                         'label' => 'Total percepciones',
                         'data' => $this->arrayPurchasesbyMonth($purchases_by_month, 'total_perception_purchase'),
-                        'backgroundColor' => 'rgb(252, 78, 75)',
-                        'borderColor' => 'rgb(252, 78, 75)',
+                        'backgroundColor' => $colors[0],
+                        'borderColor' => $colors[0],
                         'borderWidth' => 1,
                         'fill' => false,
-                        'lineTension' => 0,
+                        'lineTension' => 0
                     ],
                     [
                         'label' => 'Total compras',
                         'data' => $this->arrayPurchasesbyMonth($purchases_by_month, 'total_purchase'),
-                        'backgroundColor' => 'rgb(20, 120, 250)',
-                        'borderColor' => 'rgb(20, 120, 250)',
+                        'backgroundColor' => $colors[1],
+                        'borderColor' => $colors[1],
                         'borderWidth' => 1,
                         'fill' => false,
                         'lineTension' => 0,
@@ -238,8 +255,8 @@ class DashboardSalePurchase
                     [
                         'label' => 'Total',
                         'data' => $data_array,
-                        'backgroundColor' => 'rgb(177, 184, 194)',
-                        'borderColor' => 'rgb(177, 184, 194)',
+                        'backgroundColor' => $colors[1],
+                        'borderColor' => $colors[1],
                         'borderWidth' => 1,
                         'fill' => false,
                         'lineTension' => 0,
