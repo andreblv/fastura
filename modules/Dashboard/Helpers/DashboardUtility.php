@@ -9,6 +9,7 @@ use App\Models\Tenant\SaleNoteItem;
 use Carbon\Carbon;
 use Modules\Expense\Models\Expense;
 use App\Models\Tenant\SaleNote;
+use App\Models\Tenant\Configuration;
 
 
 class DashboardUtility
@@ -125,7 +126,7 @@ class DashboardUtility
         $total_egress = $getTotalDocumentItems['document_purchase_total'] + $getTotalSaleNoteItems['sale_note_purchase_total'] + $getTotalExpenses;
         $utility = $total_income - $total_egress;
 
-
+        $colors = $this->getThemeColors();
         return [
             'totals' => [
                 'total_income' => number_format($total_income,2, ".", ""),
@@ -138,10 +139,7 @@ class DashboardUtility
                     [
                         'label' => 'Utilidades',
                         'data' => [round($total_income,2), round($total_egress,2)],
-                        'backgroundColor' => [
-                            'rgb(20, 120, 250)',
-                            'rgb(252, 78, 75)',
-                        ]
+                        'backgroundColor' => $colors
                     ]
                 ],
             ]
@@ -377,6 +375,23 @@ class DashboardUtility
     public function getQuantityUnitPresentation($model_item)
     {
         return isset($model_item->item->presentation->quantity_unit) ? (float) $model_item->item->presentation->quantity_unit : 1;
+    }
+
+    private function getThemeColors()
+    {
+        $theme = Configuration::first()->visual->sidebar_theme;
+        switch($theme) {
+            case 'blue':
+                return ['#7367f0', '#ea5455'];
+            case 'green':
+                return ['#28c76f', '#283046'];
+            case 'red':
+                return ['#ea5455', '#283046'];
+            case 'dark':
+                return ['#283046', '#ea5455'];
+            default: 
+                return ['#00cfe8', '#ea5455'];
+        }
     }
 
 }
