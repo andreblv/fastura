@@ -84,6 +84,24 @@ class DashboardData
         ];
     }
 
+    // Colores del tema actual
+    private function getThemeColors()
+    {
+        $theme = Configuration::first()->visual->sidebar_theme;
+        switch($theme) {
+            case 'blue':
+                return ['#7367f0', '#ea5455'];
+            case 'green':
+                return ['#28c76f', '#283046'];
+            case 'red':
+                return ['#ea5455', '#283046'];
+            case 'dark':
+                return ['#283046', '#ea5455'];
+            default: 
+                return ['#00cfe8', '#ea5455'];
+        }
+    }
+
     /**
      * @param $establishment_id
      * @param $date_start
@@ -137,6 +155,7 @@ class DashboardData
 
         $sale_note_total_to_pay = $sale_note_total - $sale_note_total_payment;
 
+        $colors = $this->getThemeColors();
         return [
             'totals' => [
                 'total_payment' => number_format($sale_note_total_payment,2, ".", ""),
@@ -149,10 +168,11 @@ class DashboardData
                     [
                         'label' => 'Notas de venta',
                         'data' => [round($sale_note_total_payment,2), round($sale_note_total_to_pay,2)],
-                        'backgroundColor' => [
-                            'rgb(20, 120, 250)',
-                            'rgb(252, 78, 75)',
-                        ]
+                        'backgroundColor' => $colors,
+                        'borderColor' => $colors,
+                        'borderWidth' => 1,
+                        'fill' => false,
+                        'lineTension' => 0
                     ]
                 ],
             ]
@@ -297,6 +317,7 @@ class DashboardData
         // dd($document_total , $document_total_payment);
         // dd($document_total, $document_total_pen, $document_total_note_credit, $document_total_payment, $document_total_to_pay);
 
+        $colors = $this->getThemeColors();
         return [
             'totals' => [
                 'total_payment' => number_format($document_total_payment,2, ".", ""),
@@ -309,10 +330,11 @@ class DashboardData
                     [
                         'label' => 'Comprobantes',
                         'data' => [round($document_total_payment,2), round($document_total_to_pay,2)],
-                        'backgroundColor' => [
-                            'rgb(20, 120, 250)',
-                            'rgb(252, 78, 75)',
-                        ]
+                        'backgroundColor' => $colors,
+                        'borderColor' => $colors,
+                        'borderWidth' => 1,
+                        'fill' => false,
+                        'lineTension' => 0
                     ]
                 ],
             ]
@@ -535,6 +557,7 @@ class DashboardData
             }
         }
 
+        $colors = $this->getThemeColors();
         return [
             'totals' => [
                 'total_documents' => number_format($documents_total,2, ".", ""),
@@ -547,31 +570,30 @@ class DashboardData
                     [
                         'label' => 'Total notas de venta',
                         'data' => array_values($data_array['sale_notes_array']),
-                        'backgroundColor' => 'rgb(252, 78, 75)',
-                        'borderColor' => 'rgb(252, 78, 75)',
+                        'backgroundColor' => $colors[0],
+                        'borderColor' => $colors[0],
                         'borderWidth' => 1,
                         'fill' => false,
-                        'lineTension' => 0,
+                        'lineTension' => 0
                     ],
                     [
                         'label' => 'Total comprobantes',
                         'data' => array_values($data_array['documents_array']),
-                        'backgroundColor' => 'rgb(20, 120, 250)',
-                        'borderColor' => 'rgb(20, 120, 250)',
+                        'backgroundColor' => $colors[1],
+                        'borderColor' => $colors[1],
                         'borderWidth' => 1,
                         'fill' => false,
-                        'lineTension' => 0,
+                        'lineTension' => 0
                     ],
                     [
                         'label' => 'Total',
                         'data' => array_values($data_array['total_array']),
-                        'backgroundColor' => 'rgb(177, 184, 194)',
-                        'borderColor' => 'rgb(177, 184, 194)',
+                        'backgroundColor' => '#b1b8c2',
+                        'borderColor' => '#b1b8c2',
                         'borderWidth' => 1,
                         'fill' => false,
-                        'lineTension' => 0,
+                        'lineTension' => 0
                     ]
-
                 ],
             ]
         ];
@@ -829,8 +851,6 @@ class DashboardData
         $response_totals_purchase = $purchase['totals'];
         $response_totals_expense = $expense['totals'];
 
-        // dd($response_totals_document, $response_totals_sale_note, $response_totals_purchase, $response_totals_expense);
-
         $total_document =  $response_totals_document['total'];
         $total_payment_document =  $response_totals_document['total_payment'];
 
@@ -846,6 +866,7 @@ class DashboardData
         $all_totals = $total_document + $total_sale_note - $total_expense - $total_purchase;
         $all_totals_payment = $total_payment_document + $total_payment_sale_note - $total_payment_purchase - $total_payment_expense ;
 
+        $colors = $this->getThemeColors();
         return [
             'totals' => [
                 'total_document' => number_format($total_document,2),
@@ -861,14 +882,14 @@ class DashboardData
                 'all_totals_payment' => number_format($all_totals_payment,2),
             ],
             'graph' => [
-                'labels' => ['Totales', 'Total pagos'],
+                'labels' => ['Ingreso', 'Egreso'],
                 'datasets' => [
                     [
-                        'label' => 'Grafico',
+                        'label' => 'Balance',
                         'data' => [round($all_totals,2), round($all_totals_payment,2)],
                         'backgroundColor' => [
-                            'rgb(20, 120, 250)',
-                            'rgb(252, 78, 75)',
+                            $colors[0],  // Color para Ingreso
+                            $colors[1]   // Color para Egreso
                         ]
                     ]
                 ],
